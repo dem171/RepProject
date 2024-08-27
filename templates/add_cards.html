@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<h1>Добавлениe информационной карточки</h1>
+{% endblock %}
+
+{% block add_cards %}
+<div class="mb-3">
+<form action="add_card" method="post">
+    <input class="form-control" type="text" name="name" placeholder="Введите название"  required>
+   <br>
+   <br>
+</div>
+<div class="mb-3">
+    <textarea class="form form-control" type="text" name="text" placeholder="ВВедите текст"  rows="5" required></textarea>
+
+    <input type="submit" value="Добавить" class="btn btn-warning">
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+      {% for message in messages %}
+         {{ message }}
+      {% endfor %}
+   {% endif %}
+{% endwith %}
+
+
+</form>
+</div>
+
+
+{% endblock %}

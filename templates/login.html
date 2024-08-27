@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Страница входа
+{% endblock %}
+
+
+{% block loging %}
+<h1>Страница входа</h1>
+<form action=""  method="POST" class="form form-control ">
+    {{ form.hidden_tag() }}
+    <br>  {{ form.username }}
+    <br>
+    <br>  {{ form.password }}
+    <br> {{ form.remember.label }}{{ form.remember }}
+    <br>  {{ form.submit }}
+
+
+    <h3>Нет аккаунта?</h3>
+    <h3> <a href="register" >Регистрация</a></h3>
+</form>
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Главная страница
+{% endblock %}
+
+{% block body %}
+<h1>Главная страница</h1>
+<h2>Все карточки:</h2>
+{% block add_cards %}
+{% endblock %}
+{% for el in list_cards  %}
+<div class="alert alert-dismissible alert-info col-5"
+                         role="alert"
+                         id="alert">
+                        <strong>{{ message }}</strong>
+
+
+                       <h3> {{el.name }}</h3>
+     <br>
+                         {{el.text }}
+    <br>
+     <form method="post" action="{{ url_for('del_card', id=el.id) }}">
+         <br>
+         <a href="{{ url_for('upd_card', id=el.id) }}" class="btn btn-warning">Редактировать</a><br>
+     <br>
+     <button type="submit" class="btn btn-danger">Удалить</button></form>
+ </div>
+{% endfor %}
+{% endblock %}

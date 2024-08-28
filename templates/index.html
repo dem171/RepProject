@@ -16,8 +16,10 @@
                         <strong>{{ message }}</strong>
 
 
-                       <h3> {{el.name }}</h3>
-     <br>
+                       <h3> {{el.name }} </h3>
+    Дата публикации:  {{ el.date_add_card }}
+    <br>
+    <br>
                          {{el.text }}
     <br>
      <form method="post" action="{{ url_for('del_card', id=el.id) }}">

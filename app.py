@@ -1,26 +1,37 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required , current_user
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, InputRequired, Length, ValidationError
+from flask_migrate import Migrate
+from datetime import datetime
+from sqlalchemy import MetaData
+
+
+convention = {
+    "ix": 'ix_%(column_0_label)s',
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"
+}
+
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///my_db.db'
-db = SQLAlchemy(app)
+metadata = MetaData(naming_convention=convention)
+db = SQLAlchemy(app, metadata=metadata)
 app.secret_key = "1234"
 login = LoginManager()
 login.init_app(app)
 login.login_view = "login"
+migrate = Migrate(app, db, render_as_batch=True)
 
 
-
-class Cards(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    text = db.Column(db.Text)
 
 
 class User(db.Model, UserMixin):
@@ -28,6 +39,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(30), nullable=False, unique=True, index=True)
     password = db.Column(db.String)
     rol = db.Column(db.String(15), index=True)
+    date_registration = db.Column(db.DateTime, default=datetime.utcnow)
 
 
     def set_password(self, password):
@@ -38,6 +50,20 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
+
+
+class Cards(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    text = db.Column(db.Text)
+    date_add_card = db.Column(db.DateTime,default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    def __repr__(self):
+        return f'Card {self.name}'
+
+
+
 
 
 @login.user_loader
@@ -51,6 +77,12 @@ def load_user(user_id):
 def index():
     list_cards = Cards.query.all()
     return render_template("index.html", list_cards=list_cards)
+
+
+@app.route("/personal_account/", methods=['GET', 'POST'])
+@login_required
+def personal_account():
+    return render_template('personal_account.html', current_user=current_user)
 
 
 @app.route('/add_cards')

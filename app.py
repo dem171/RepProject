@@ -40,6 +40,8 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String)
     rol = db.Column(db.String(15), index=True)
     date_registration = db.Column(db.DateTime, default=datetime.utcnow)
+    user_cards = db.relationship("Cards", backref="user")
+
 
 
     def set_password(self, password):
@@ -49,7 +51,7 @@ class User(db.Model, UserMixin):
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        return '<User {}>'.format(self.username)
+        return f'User {self.username}'
 
 
 class Cards(db.Model):
@@ -75,11 +77,11 @@ def load_user(user_id):
 @app.route("/")
 @app.route("/index")
 def index():
-    list_cards = Cards.query.all()
-    return render_template("index.html", list_cards=list_cards)
+    list_cards = Cards.query.order_by(Cards.date_add_card).all()
+    return render_template("index.html", list_cards=list_cards, )
 
 
-@app.route("/personal_account/", methods=['GET', 'POST'])
+@app.route("/personal_account/")
 @login_required
 def personal_account():
     return render_template('personal_account.html', current_user=current_user)
@@ -107,10 +109,12 @@ def update_card():
 
 @app.route('/add_card', methods=['GET','POST'])
 def add_card():
+
     if request.method == 'POST':
+        poster = current_user.id
         name = request.form['name']
         text = request.form['text']
-        card = Cards(name=name, text=text)
+        card = Cards(name=name, text=text, user_id=poster)
         try:
             db.session.add(card)
             db.session.commit()
@@ -213,7 +217,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Вход")
 
 
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         app.run(debug=True)
+

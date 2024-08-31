@@ -17,16 +17,13 @@
 
 
                        <h3> {{el.name }} </h3>
-    Дата публикации:  {{ el.date_add_card }}
     <br>
     <br>
                          {{el.text }}
     <br>
-     <form method="post" action="{{ url_for('del_card', id=el.id) }}">
-         <br>
-         <a href="{{ url_for('upd_card', id=el.id) }}" class="btn btn-warning">Редактировать</a><br>
-     <br>
-     <button type="submit" class="btn btn-danger">Удалить</button></form>
+    <br>
+            Дата публикации:  {{ el.date_add_card }}
+
  </div>
 {% endfor %}
 {% endblock %}

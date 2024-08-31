@@ -3,4 +3,26 @@
 
 {% block body %}
 <h1>Это страница пользователя {{  current_user.username }}</h1>
+<h3>Ваши посты</h3>
+
+    {% for el in current_user.user_cards %}
+    <div class="alert alert-dismissible alert-info col-5"
+                         role="alert"
+                         id="alert">
+                        <strong>{{ message }}</strong>
+
+
+   <br><h4>{{ el.name }}</h4>   <br>
+   <br>  {{ el.text }}<br>
+    <br> Дата публикации{{  el.date_add_card }}
+         <form method="post" action="{{ url_for('del_card', id=el.id) }}">
+         <br>
+         <a href="{{ url_for('upd_card', id=el.id) }}" class="btn btn-warning">Редактировать</a><br>
+     <br>
+     <button type="submit" class="btn btn-danger">Удалить</button></form>
+    </div>
+        {% endfor %}
+
+
+
 {% endblock %}

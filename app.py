@@ -78,10 +78,10 @@ def load_user(user_id):
 @app.route("/index")
 def index():
     list_cards = Cards.query.order_by(Cards.date_add_card).all()
-    return render_template("index.html", list_cards=list_cards, )
+    return render_template("index.html", list_cards=list_cards)
 
 
-@app.route("/personal_account/")
+@app.route("/personal_acc")
 @login_required
 def personal_account():
     return render_template('personal_account.html', current_user=current_user)
@@ -91,6 +91,21 @@ def personal_account():
 @login_required
 def add_cards():
     return render_template('add_cards.html')
+
+
+@app.route("/all_user")
+def user_friend():
+    users = User.query.all()
+    return render_template('all_user.html', users=users)
+
+
+
+
+@app.route('/user/<id>')
+def acc_user(id):
+    user = User.query.get_or_404(id)
+    return render_template('user_acc.html', user=user)
+
 
 
 @app.route("/logout")

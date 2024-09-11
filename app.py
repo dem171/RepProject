@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_login import LoginManager, login_user, logout_user, login_required , current_user
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_login import UserMixin
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
@@ -77,8 +77,9 @@ def load_user(user_id):
 @app.route("/")
 @app.route("/index")
 def index():
-    list_cards = Cards.query.order_by(Cards.date_add_card).all()
-    return render_template("index.html", list_cards=list_cards)
+    list_card = User.query.all()
+    list_cards = Cards.query.all()
+    return render_template("index.html",   list_cards=list_cards, list_card=list_card)
 
 
 @app.route("/personal_acc")
@@ -99,13 +100,10 @@ def user_friend():
     return render_template('all_user.html', users=users)
 
 
-
-
 @app.route('/user/<id>')
 def acc_user(id):
     user = User.query.get_or_404(id)
     return render_template('user_acc.html', user=user)
-
 
 
 @app.route("/logout")

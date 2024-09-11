@@ -6,25 +6,26 @@
 
 {% block body %}
 <h1>Главная страница</h1>
-<h2>Все карточки:</h2>
+<h2>Все посты:</h2>
 {% block add_cards %}
 {% endblock %}
-{% for el in list_cards  %}
+{% for el  in list_cards  %}
 <div class="alert alert-dismissible alert-info col-5"
                          role="alert"
                          id="alert">
-                        <strong>{{ message }}</strong>
+                        <strong>{{ el.message }}</strong>
 
 
-                       <h3> {{el.name }} </h3>
+                       <h3> {{ el.name }} </h3>
     <br>
     <br>
-                         {{el.text }}
+                         {{ el.text }}
     <br>
     <br>
-            Дата публикации:  {{ el.date_add_card }}
-    Автор
+            Дата публикации:  {{ el.date_add_card.date() }}
+    Автор: {{ username }}
  </div>
+
 {% endfor %}
 
 {% endblock %}

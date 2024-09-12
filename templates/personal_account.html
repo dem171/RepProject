@@ -3,6 +3,7 @@
 
 {% block body %}
 <h1>Это страница пользователя {{  current_user.username }}</h1>
+Дата регистрации : {{ current_user.date_registration.date() }}
 <h3>Ваши посты</h3>
 
     {% for el in current_user.user_cards %}

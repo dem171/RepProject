@@ -9,11 +9,11 @@
 <h2>Все посты:</h2>
 {% block add_cards %}
 {% endblock %}
-{% for el  in list_cards  %}
+{% for el in   list_cards  %}
 <div class="alert alert-dismissible alert-info col-5"
                          role="alert"
                          id="alert">
-                        <strong>{{ el.message }}</strong>
+                        <strong> </strong>
 
 
                        <h3> {{ el.name }} </h3>
@@ -22,8 +22,8 @@
                          {{ el.text }}
     <br>
     <br>
-            Дата публикации:  {{ el.date_add_card.date() }}
-    Автор: {{ username }}
+            Дата публикации:{{ el.date_add_card.date()  }}
+    Автор: {{ el.username }}
  </div>
 
 {% endfor %}

@@ -58,14 +58,11 @@ class Cards(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     text = db.Column(db.Text)
-    date_add_card = db.Column(db.DateTime,default=datetime.utcnow)
+    date_add_card = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return f'Card {self.name}'
-
-
-
 
 
 @login.user_loader
@@ -73,13 +70,12 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
-
 @app.route("/")
 @app.route("/index")
 def index():
-    list_card = User.query.all()
+    list_post = User.query.all()
     list_cards = Cards.query.all()
-    return render_template("index.html",   list_cards=list_cards, list_card=list_card)
+    return render_template("index.html",   list_cards=list_cards, list_post=list_post)
 
 
 @app.route("/personal_acc")
@@ -117,7 +113,6 @@ def logout():
 @app.route('/update_card')
 def update_card():
     return render_template('update_card.html')
-
 
 
 @app.route('/add_card', methods=['GET','POST'])

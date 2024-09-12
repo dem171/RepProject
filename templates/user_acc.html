@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}
-Страница пользователя: {{ user.username }}
 {% endblock  %}
 {% block body %}
 <h3> Страница пользователя: {{ user.username }} </h3>
+Дата регистрации {{  user.date_registration.date()  }}
 <br><h3>Список постов</h3>
 
 {% for post in user.user_cards %}

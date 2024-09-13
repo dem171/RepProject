@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 from werkzeug.security import generate_password_hash, check_password_hash
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, InputRequired, Length, ValidationError
+from wtforms.validators import DataRequired, InputRequired, Length, ValidationError, EqualTo
 from flask_migrate import Migrate
 from datetime import datetime
 from sqlalchemy import MetaData
@@ -43,7 +43,6 @@ class User(db.Model, UserMixin):
     user_cards = db.relationship("Cards", backref="user")
 
 
-
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
@@ -73,9 +72,8 @@ def load_user(user_id):
 @app.route("/")
 @app.route("/index")
 def index():
-    list_post = User.query.all()
-    list_cards = Cards.query.all()
-    return render_template("index.html",   list_cards=list_cards, list_post=list_post)
+    list_cards = Cards.query.order_by(Cards.date_add_card.desc()).all()
+    return render_template("index.html",   list_cards=list_cards)
 
 
 @app.route("/personal_acc")
@@ -180,7 +178,7 @@ def register():
         new_user = User(username=form.username.data, password=hash_pass)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for('index'))
+        return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
 

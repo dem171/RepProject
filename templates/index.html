@@ -23,7 +23,7 @@
     <br>
     <br>
             Дата публикации:{{ el.date_add_card.date()  }}
-    Автор: {{ el.username }}
+    Автор: <a href="{{ url_for('acc_user', id=el.user_id) }}" >{{ el.user.username }}</a>
  </div>
 
 {% endfor %}

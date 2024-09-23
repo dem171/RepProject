@@ -4,8 +4,8 @@
 {% block body %}
 <h3> Страница пользователя: {{ user.username }} </h3>
 Дата регистрации {{  user.date_registration.date()  }}
+{% if user.user_cards %}
 <br><h3>Список постов</h3>
-
 {% for post in user.user_cards %}
 <div class="alert alert-dismissible alert-info col-5"
                          role="alert"
@@ -15,6 +15,11 @@
 Дата публикации: {{ post.date_add_card.date() }}
 </div>
     {% endfor %}
+{% else %}
+<h3>У вас пока нет постов</h3>
+{% endif %}
+
+<br><h3>Ваши комментарии</h3>
 
 
 

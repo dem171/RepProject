@@ -17,7 +17,10 @@
        <br>
 
        <br>     {{ form.password }}<br>
-       <br>
+       <br>     {{ form.confirm_password }}<br>
+            {% for error in form.password.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
      <br>    {{ form.submit }}
 
 

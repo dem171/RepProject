@@ -32,8 +32,6 @@ login.login_view = "login"
 migrate = Migrate(app, db, render_as_batch=True)
 
 
-
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), nullable=False, unique=True, index=True)
@@ -41,7 +39,7 @@ class User(db.Model, UserMixin):
     rol = db.Column(db.String(15), index=True)
     date_registration = db.Column(db.DateTime, default=datetime.utcnow)
     user_cards = db.relationship("Cards", backref="user")
-
+    user_comment = db.relationship("Comments", backref="user_com")
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -59,9 +57,21 @@ class Cards(db.Model):
     text = db.Column(db.Text)
     date_add_card = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    card_comment = db.relationship("Comments", backref="card_com")
 
     def __repr__(self):
         return f'Card {self.name}'
+
+
+class Comments(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text_comment = db.Column(db.String, nullable=False)
+    date_comment = db.Column(db.DateTime, default=datetime.utcnow)
+    author_id = db.Column(db.Integer,  db.ForeignKey("user.id"))
+    card_id = db.Column(db.Integer,  db.ForeignKey("cards.id"))
+
+    def __repr__(self):
+        return f'Comment {self.text_comment} ,{self.id}, {self.date_comment}'
 
 
 @login.user_loader
@@ -88,6 +98,12 @@ def add_cards():
     return render_template('add_cards.html')
 
 
+@app.route('/discussion/<int:id>')
+def discussion(id):
+    card_info = Cards.query.get(id)
+    return render_template('discussion.html', card_info=card_info)
+
+
 @app.route("/all_user")
 def user_friend():
     users = User.query.all()
@@ -96,7 +112,7 @@ def user_friend():
 
 @app.route('/user/<id>')
 def acc_user(id):
-    user = User.query.get_or_404(id)
+    user = User.query.get(id)
     return render_template('user_acc.html', user=user)
 
 
@@ -113,6 +129,25 @@ def update_card():
     return render_template('update_card.html')
 
 
+@app.route('/add_comment/<int:id>', methods=['GET','POST'])
+@login_required
+def add_comment(id):
+    if request.method == 'POST':
+        author_com = current_user.id
+        text = request.form['text']
+        comment = Comments(text_comment=text, author_id=author_com, card_id=id)
+        try:
+            db.session.add(comment)
+            db.session.commit()
+            flash("Комментарий успешно добавлен")
+            return redirect(request.referrer)
+
+        except:
+            return "Ошибка при добавлении комментария"
+    else:
+        flash("Необходимо заполнить все поля ")
+        return redirect('/index')
+
 @app.route('/add_card', methods=['GET','POST'])
 def add_card():
 
@@ -127,7 +162,7 @@ def add_card():
             flash("Карточка успешно добавлена")
             return redirect('index')
 
-        except:"Ошибка при добавлении карточки"
+        except: return "Ошибка при добавлении карточки"
     else:
         flash("Необходимо заполнить все поля ")
         return redirect('/index')
@@ -138,8 +173,6 @@ def add_card():
 def del_card(id):
     card = Cards.query.get_or_404(id)
     if request.method == 'POST':
-
-
         try:
             db.session.delete(card)
             db.session.commit()
@@ -150,7 +183,7 @@ def del_card(id):
         return "error 404"
 
 
-@app.route('/update/<int:id>/post', methods=['POST' ,'GET'])
+@app.route('/update/<int:id>/post', methods=['POST', 'GET'])
 def upd_card(id):
     card = Cards.query.get_or_404(id)
     if request.method == 'POST':
@@ -197,19 +230,23 @@ def login():
     return render_template('login.html', form=form)
 
 
-
-
 class RegistredForm(FlaskForm):
     username = StringField(validators=[DataRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Введите login"})
     password = PasswordField(validators=[DataRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Введите пароль"})
     submit = SubmitField("Регистрация")
 
     def validate_username(self, username):
-        exist_user_username = User.query.filter_by(username=username.data).first()
+        exist_user_username = User.query.filter_by(username=username.data).first    ()
         if exist_user_username:
             raise ValidationError(
                 f'имя {username.data} уже занято')
 
+
+    def validate_pass(self,password, confirm_password):
+        if password.data != confirm_password.data:
+            raise ValidationError(
+                "Пароли должны сопвпадать"
+            )
 
 
 class LoginForm(FlaskForm):

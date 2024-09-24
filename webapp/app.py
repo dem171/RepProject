@@ -1,77 +1,21 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from flask_login import UserMixin
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf import FlaskForm
-from werkzeug.security import generate_password_hash, check_password_hash
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
-from wtforms.validators import DataRequired, InputRequired, Length, ValidationError, EqualTo
 from flask_migrate import Migrate
-from datetime import datetime
-from sqlalchemy import MetaData
+from werkzeug.security import generate_password_hash, check_password_hash
 
-
-convention = {
-    "ix": 'ix_%(column_0_label)s',
-    "uq": "uq_%(table_name)s_%(column_0_name)s",
-    "ck": "ck_%(table_name)s_%(constraint_name)s",
-    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-    "pk": "pk_%(table_name)s"
-}
-
-
+from webapp.form import RegistredForm, LoginForm
+from webapp.models import User, Comments, Cards
+from webapp.models import db
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///my_db.db'
-metadata = MetaData(naming_convention=convention)
-db = SQLAlchemy(app, metadata=metadata)
+db.init_app(app)
 app.secret_key = "1234"
 login = LoginManager()
 login.init_app(app)
 login.login_view = "login"
 migrate = Migrate(app, db, render_as_batch=True)
 
-
-class User(db.Model, UserMixin):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(30), nullable=False, unique=True, index=True)
-    password = db.Column(db.String)
-    rol = db.Column(db.String(15), index=True)
-    date_registration = db.Column(db.DateTime, default=datetime.utcnow)
-    user_cards = db.relationship("Cards", backref="user")
-    user_comment = db.relationship("Comments", backref="user_com")
-
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
-
-    def chek_password(self, password):
-        return check_password_hash(self.password, password)
-
-    def __repr__(self):
-        return f'User {self.username}'
-
-
-class Cards(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String, nullable=False)
-    text = db.Column(db.Text)
-    date_add_card = db.Column(db.DateTime, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    card_comment = db.relationship("Comments", backref="card_com")
-
-    def __repr__(self):
-        return f'Card {self.name}'
-
-
-class Comments(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    text_comment = db.Column(db.String, nullable=False)
-    date_comment = db.Column(db.DateTime, default=datetime.utcnow)
-    author_id = db.Column(db.Integer,  db.ForeignKey("user.id"))
-    card_id = db.Column(db.Integer,  db.ForeignKey("cards.id"))
-
-    def __repr__(self):
-        return f'Comment {self.text_comment} ,{self.id}, {self.date_comment}'
 
 
 @login.user_loader
@@ -129,6 +73,22 @@ def update_card():
     return render_template('update_card.html')
 
 
+@app.route('/del_comment/<int:id>', methods=["GET", "POST"])
+def delete_comment(id):
+    comment = Comments.query.get_or_404(id)
+    if request.method == "POST":
+        try:
+            db.session.delete(comment)
+            db.session.commit()
+            flash("Комментарий успешно удален")
+            return redirect(request.referrer)
+        except:
+            return "ПРи удалении комментария произошла ошибка"
+
+    else:
+        return "ERROR 404"
+
+
 @app.route('/add_comment/<int:id>', methods=['GET','POST'])
 @login_required
 def add_comment(id):
@@ -148,9 +108,8 @@ def add_comment(id):
         flash("Необходимо заполнить все поля ")
         return redirect('/index')
 
-@app.route('/add_card', methods=['GET','POST'])
+@app.route('/add_card', methods=['POST','GET'])
 def add_card():
-
     if request.method == 'POST':
         poster = current_user.id
         name = request.form['name']
@@ -201,8 +160,6 @@ def upd_card(id):
         return render_template('update_card.html', card=card)
 
 
-
-
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     form = RegistredForm()
@@ -211,6 +168,7 @@ def register():
         new_user = User(username=form.username.data, password=hash_pass)
         db.session.add(new_user)
         db.session.commit()
+        flash("Вы успешно зарегистрировались, можете войти на сайт")
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
@@ -228,37 +186,6 @@ def login():
         flash('не правильно введен логин или пароль')
         return redirect(url_for('login',form=form))
     return render_template('login.html', form=form)
-
-
-class RegistredForm(FlaskForm):
-    username = StringField(validators=[DataRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Введите login"})
-    password = PasswordField(validators=[DataRequired(), Length(min=4, max=20)], render_kw={"placeholder":"Введите пароль"})
-    submit = SubmitField("Регистрация")
-
-    def validate_username(self, username):
-        exist_user_username = User.query.filter_by(username=username.data).first    ()
-        if exist_user_username:
-            raise ValidationError(
-                f'имя {username.data} уже занято')
-
-
-    def validate_pass(self,password, confirm_password):
-        if password.data != confirm_password.data:
-            raise ValidationError(
-                "Пароли должны сопвпадать"
-            )
-
-
-class LoginForm(FlaskForm):
-    username = StringField(validators=[InputRequired(), Length(min=4, max=20)],
-                           render_kw={"placeholder": "Введите login"})
-    password = PasswordField(validators=[InputRequired(), Length(min=3, max=20)],
-                             render_kw={"placeholder": "Введите пароль"})
-
-    remember = BooleanField('Запомнить', default=False)
-
-    submit = SubmitField("Вход")
-
 
 
 if __name__ == "__main__":

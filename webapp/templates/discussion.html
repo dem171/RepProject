@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Обсуждение поста
+{% endblock  %}
+{% block body %}
+<h4>Обсуждение поста: </h4>
+<div class="alert alert-dismissible alert-info col-5"
+                         role="alert"
+                         id="alert">
+    <br>
+    <h3>{{ card_info.name }}</h3><br>
+        {{ card_info.text }}<br>
+    Автор: <a href="{{ url_for('acc_user', id=card_info.user.id) }}">{{ card_info.user.username }}<br></a>
+    Дата написания: {{  card_info.date_add_card.date() }}
+</div>
+<form action="{{ url_for('add_comment', id=card_info.id)  }}" method="post">
+    <input name="text" placeholder="Комментировать" required>
+    <input type="submit" value="Отправить" class="btn btn-warning">
+</form>
+<h3>КОММЕНТРАИИ</h3>
+
+{% for el in card_info.card_comment  %}
+<div class="alert alert-dismissible alert-success col-5"
+                         role="alert"
+                         id="alert">
+{{ el.text_comment }}<br>
+ Автор:   {{ el.user_com.username }}<br>
+ Дата добавления : {{ el.date_comment.date() }}
+    {% if current_user.id == el.user_com.id %}
+    <form method="post" action="{{ url_for('delete_comment', id=el.id) }}">
+    <a href="" methods="post" class="btn btn-warning">Редактировать</a>
+    <button  type="submit"   class="btn btn-danger">Удалить</button>
+    {% else %}
+    {% endif %}
+</div>
+{% endfor %}
+
+{% endblock %}
+

@@ -24,6 +24,20 @@
     </div>
         {% endfor %}
 
+<br><h3>Ваши комментари</h3>
+{% if current_user.user_comment %}
+{% for el in current_user.user_comment %}
+<div class="alert alert-dismissible alert-success col-5"
+                         role="alert"
+                         id="alert">
+                        <strong>{{ message }}</strong>
+{{ el.text_comment  }}
+{{ el.date_comment }}
+</div>
+    {%  endfor %}
+    {% else %}
+<h4>У вас пока нет комментариев</h4>
+{% endif %}
 
 
 {% endblock %}

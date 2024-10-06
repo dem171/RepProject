@@ -18,18 +18,20 @@
     <input name="text" placeholder="Комментировать" required>
     <input type="submit" value="Отправить" class="btn btn-warning">
 </form>
-<h3>КОММЕНТРАИИ</h3>
+<h3>КОММЕНТАРИИ</h3>
 
 {% for el in card_info.card_comment  %}
 <div class="alert alert-dismissible alert-success col-5"
                          role="alert"
                          id="alert">
-{{ el.text_comment }}<br>
- Автор:   {{ el.user_com.username }}<br>
+    <a href="{{ url_for('acc_user', id=card_info.user.id) }}" >{{ el.user_com.username }}</a><br>
+
+    {{ el.text_comment }}<br>
+
  Дата добавления : {{ el.date_comment.date() }}
     {% if current_user.id == el.user_com.id %}
     <form method="post" action="{{ url_for('delete_comment', id=el.id) }}">
-    <a href="" methods="post" class="btn btn-warning">Редактировать</a>
+    <a href="{{ url_for('update_comment', id=el.id) }}" methods="post" class="btn btn-warning">Редактировать</a>
     <button  type="submit"   class="btn btn-danger">Удалить</button>
     {% else %}
     {% endif %}

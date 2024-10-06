@@ -17,7 +17,6 @@ login.login_view = "login"
 migrate = Migrate(app, db, render_as_batch=True)
 
 
-
 @login.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
@@ -71,6 +70,7 @@ def logout():
 @app.route('/update_card')
 def update_card():
     return render_template('update_card.html')
+
 
 
 @app.route('/del_comment/<int:id>', methods=["GET", "POST"])
@@ -136,10 +136,25 @@ def del_card(id):
             db.session.delete(card)
             db.session.commit()
             flash("Карточка успешно удалена")
-            return redirect('/index')
+            return redirect(request.referrer)
         except: "Не удалось удалить"
     else:
         return "error 404"
+
+
+@app.route('/update_comment/<int:id>', methods=["POST", "GET"])
+def update_comment(id):
+    comment = Comments.query.get_or_404(id)
+    if request.method == "POST":
+        comment.text_comment = request.form["text_comment"]
+        try:
+            db.session.commit()
+            flash("Комментарий успешно изменен")
+            return redirect(url_for("discussion", id=comment.card_id))
+        except:
+            return "При изменении комментария произошла ошибка"
+    else:
+        return render_template('update_comment.html', comment=comment)
 
 
 @app.route('/update/<int:id>/post', methods=['POST', 'GET'])

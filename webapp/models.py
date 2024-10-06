@@ -18,9 +18,6 @@ metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy()
 
 
-
-
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), nullable=False, unique=True, index=True)
@@ -38,6 +35,7 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'User {self.username}'
+
 
 class Cards(db.Model):
     id = db.Column(db.Integer, primary_key=True)

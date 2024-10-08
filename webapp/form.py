@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, InputRequired, Length, ValidationError
 
 from webapp.models import User
@@ -34,3 +34,7 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Вход")
 
 
+class CommentForm(FlaskForm):
+    text_comment = TextAreaField(validators=[InputRequired()],
+                               render_kw={"placeholder": "Введите комментарий"})
+    submit = SubmitField("Отправить")

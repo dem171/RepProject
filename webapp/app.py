@@ -3,7 +3,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from webapp.form import RegistredForm, LoginForm
+from webapp.form import RegistredForm, LoginForm, CommentForm
 from webapp.models import User, Comments, Cards
 from webapp.models import db
 
@@ -41,10 +41,22 @@ def add_cards():
     return render_template('add_cards.html')
 
 
-@app.route('/discussion/<int:id>')
+@app.route('/discussion/<int:id>', methods=["POST", "GET"])
+@login_required
 def discussion(id):
-    card_info = Cards.query.get(id)
-    return render_template('discussion.html', card_info=card_info)
+    form = CommentForm()
+    card_info = Cards.query.get_or_404(id)
+    if request.method == "POST":
+        if form.validate_on_submit():
+            comment = Comments(text_comment=form.text_comment.data, author_id=current_user.id, card_id=card_info.id)
+            try:
+                db.session.add(comment)
+                db.session.commit()
+                flash("Комментарий успешно добавлен")
+                return redirect(request.referrer)
+            except:
+                return "ошибка при добалвении комментария"
+    return render_template('discussion.html', card_info=card_info, form=form)
 
 
 @app.route("/all_user")
@@ -89,24 +101,8 @@ def delete_comment(id):
         return "ERROR 404"
 
 
-@app.route('/add_comment/<int:id>', methods=['GET','POST'])
-@login_required
-def add_comment(id):
-    if request.method == 'POST':
-        author_com = current_user.id
-        text = request.form['text']
-        comment = Comments(text_comment=text, author_id=author_com, card_id=id)
-        try:
-            db.session.add(comment)
-            db.session.commit()
-            flash("Комментарий успешно добавлен")
-            return redirect(request.referrer)
 
-        except:
-            return "Ошибка при добавлении комментария"
-    else:
-        flash("Необходимо заполнить все поля ")
-        return redirect('/index')
+
 
 @app.route('/add_card', methods=['POST','GET'])
 def add_card():
@@ -199,7 +195,7 @@ def login():
                 flash('Вы успешно вошли на сайт')
                 return redirect(url_for('index'))
         flash('не правильно введен логин или пароль')
-        return redirect(url_for('login',form=form))
+        return redirect(url_for('login', form=form))
     return render_template('login.html', form=form)
 
 

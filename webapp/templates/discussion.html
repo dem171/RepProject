@@ -13,11 +13,17 @@
         {{ card_info.text }}<br>
     Автор: <a href="{{ url_for('acc_user', id=card_info.user.id) }}">{{ card_info.user.username }}<br></a>
     Дата написания: {{  card_info.date_add_card.date() }}
+    {% if card_info.user.id == current_user.id %}
+    <a href="{{ url_for('upd_card', id=card_info.id) }}" class="btn btn-warning">Редактировать</a><br>
+    <form method="post" action="{{ url_for('del_card', id=card_info.id) }}">
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    </form>
+    {% endif %}
 </div>
 <form action="{{url_for('discussion', id=card_info.id) }}" method="POST">
     {{ form.hidden_tag() }}
-    {{ form.text_comment }}
-    {{ form.submit }}
+    <textarea class="form-control"  rows="2" {{ form.text_comment }}></textarea>
+  <br>  <input class="btn btn-warning" {{ form.submit }}>
 </form>
 <h3>КОММЕНТАРИИ</h3>
 

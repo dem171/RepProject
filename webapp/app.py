@@ -3,9 +3,9 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from webapp.form import RegistredForm, LoginForm, CommentForm
-from webapp.models import User, Comments, Cards
-from webapp.models import db
+from form import RegistredForm, LoginForm, CommentForm, PostForm
+from models import User, Comments, Cards
+from models import db
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///my_db.db'
@@ -35,10 +35,24 @@ def personal_account():
     return render_template('personal_account.html', current_user=current_user)
 
 
-@app.route('/add_cards')
+@app.route('/add_cards', methods=["POST", "GET"])
 @login_required
 def add_cards():
-    return render_template('add_cards.html')
+    form = PostForm()
+    if request.method == 'POST':
+        poster = current_user.id
+        name = form.name.data
+        text = form.text.data
+        card = Cards(name=name, text=text, user_id=poster)
+        try:
+            db.session.add(card)
+            db.session.commit()
+            flash("Карточка успешно добавлена")
+            return redirect('index')
+
+        except:
+            return "Ошибка при добавлении карточки"
+    return render_template('add_cards.html', form=form)
 
 
 @app.route('/discussion/<int:id>', methods=["POST", "GET"])
@@ -101,28 +115,6 @@ def delete_comment(id):
         return "ERROR 404"
 
 
-
-
-
-@app.route('/add_card', methods=['POST','GET'])
-def add_card():
-    if request.method == 'POST':
-        poster = current_user.id
-        name = request.form['name']
-        text = request.form['text']
-        card = Cards(name=name, text=text, user_id=poster)
-        try:
-            db.session.add(card)
-            db.session.commit()
-            flash("Карточка успешно добавлена")
-            return redirect('index')
-
-        except: return "Ошибка при добавлении карточки"
-    else:
-        flash("Необходимо заполнить все поля ")
-        return redirect('/index')
-
-
 @app.route('/delete/<int:id>', methods=['POST', 'GET'])
 @login_required
 def del_card(id):
@@ -132,11 +124,11 @@ def del_card(id):
             db.session.delete(card)
             db.session.commit()
             flash("Карточка успешно удалена")
-            return redirect(request.referrer)
+            return redirect('/index')
         except: "Не удалось удалить"
     else:
         return "error 404"
-
+    render_template('index.html')
 
 @app.route('/update_comment/<int:id>', methods=["POST", "GET"])
 def update_comment(id):
@@ -153,22 +145,19 @@ def update_comment(id):
         return render_template('update_comment.html', comment=comment)
 
 
-@app.route('/update/<int:id>/post', methods=['POST', 'GET'])
+@app.route('/discussion/<int:id>/update', methods=['POST', 'GET'])
 def upd_card(id):
     card = Cards.query.get_or_404(id)
     if request.method == 'POST':
         card.name = request.form["name"]
         card.text = request.form["text"]
-
         try:
             db.session.commit()
             flash("Карточка успешно изменена")
-            return redirect(url_for('index'))
+            return redirect(url_for('discussion', id=id))
         except:
-            return "ПРоизошла ошибка редактирования"
-
-    else:
-        return render_template('update_card.html', card=card)
+            return "ПРоизошла ошибка добавления"
+    return render_template('update_card.html', card=card)
 
 
 @app.route('/register', methods=['POST', 'GET'])

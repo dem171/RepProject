@@ -33,6 +33,10 @@ class User(db.Model, UserMixin):
     def chek_password(self, password):
         return check_password_hash(self.password, password)
 
+
+    def post_count(self):
+        return Cards.query.filter(Cards.user_id == self.id).count()
+
     def __repr__(self):
         return f'User {self.username}'
 
@@ -42,8 +46,12 @@ class Cards(db.Model):
     name = db.Column(db.String, nullable=False)
     text = db.Column(db.Text)
     date_add_card = db.Column(db.DateTime, default=datetime.utcnow)
+    comment_count = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     card_comment = db.relationship("Comments", backref="card_com")
+
+    def comments_count(self):
+        return Comments.query.filter(Comments.card_id == self.id).count()
 
     def __repr__(self):
         return f'Card {self.name}'

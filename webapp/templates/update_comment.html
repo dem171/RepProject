@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+
+{% block body %}
+<div>
+   <form action="{{ url_for('update_comment', id=comment.id) }}" method="post" class="form form-control">
+       <input type="text" name="text_comment" value="{{ comment.text_comment }}"><br>
+     <br>  <input type="submit" value="Сохранить" class="btn btn-warning"><br>
+     <br>  <a href="/personal_acc" class="btn btn-warning">Отменить редактирования</a>
+
+   </form>
+
+
+
+
+
+
+</div>
+
+
+
+
+
+{% endblock %}

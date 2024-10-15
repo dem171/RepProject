@@ -21,7 +21,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), nullable=False, unique=True, index=True)
     password = db.Column(db.String)
-    rol = db.Column(db.String(15), index=True)
+    rol = db.Column(db.String(15), index=True, default="user")
     date_registration = db.Column(db.DateTime, default=datetime.utcnow)
     user_cards = db.relationship("Cards", backref="user", cascade='all, delete')
     user_comment = db.relationship("Comments", backref="user_com", cascade='all, delete')

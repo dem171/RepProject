@@ -22,8 +22,8 @@
 </div>
 <form action="{{url_for('discussion', id=card_info.id) }}" method="POST">
     {{ form.hidden_tag() }}
-    <textarea class="form-control"  rows="2" {{ form.text_comment }}></textarea>
-  <br>  <input class="btn btn-warning" {{ form.submit }}>
+    {{ form.text_comment(class_="form-control") }}
+  <br>  {{ form.submit(class_="btn btn-warning") }}
 </form>
 <h3>КОММЕНТАРИИ</h3>
 

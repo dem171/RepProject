@@ -2,26 +2,11 @@
 
 {% block body %}
 <h1>Редактированиия карточки</h1>
-{% for el in cards  %}
+<div>
+    <form action="{{ url_for('upd_card', id=card.id) }}" method="POST" >
+        <input class="form form-control" type="text" id="name" name="name" value="{{ card.name }}" required><br><br>
 
-{{el.name }}
-{% endfor %}
-{% endblock %}
-
-{% block add_cards %}
-{% for el in cards  %}
- <div class="alert alert-info">
-    {{el.name }}
-     <br>
-
-{% endfor %}
-</div>
-    <form action="{{ url_for('upd_card', id=card.id) }}" method="POST" class="form form-control">
-        <label for="name">Название:</label>
-        <input type="text" id="name" name="name" value="{{ card.name }}" required><br><br>
-
-        <label for="text">Текст:</label>
-        <textarea id="text" name="text" required>{{ card.text }}</textarea><br><br>
+        <textarea class="form form-control" id="text" name="text" required>{{ card.text }}</textarea><br><br>
 
         <input type="submit" value="Сохранить" class="btn btn-warning">
         <a href="/personal_acc" class="btn btn-warning">Отменить редактирования</a>

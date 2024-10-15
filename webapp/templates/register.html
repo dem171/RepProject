@@ -6,9 +6,9 @@
 <h1>Страница регистрации</h1>
 {% block registr %}
 <h1>Страница регистрации</h1>
-<div>
+<div class="container">
 
-   <form action=""  method="POST">
+   <form  class="floating"    action=""  method="POST">
        {{ form.hidden_tag() }}
        {{ form.username }}
        {% for error in form.username.errors %}

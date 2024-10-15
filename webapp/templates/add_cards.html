@@ -5,18 +5,18 @@
 {% endblock %}
 
 {% block add_cards %}
+<div class="container">
 <div class="mb-3">
-    <form action="" method="post" {{ form.hidden_tag() }}>
-  <input type="text" class="form-control"  placeholder="Введите название"{{ form.name }}>
+    <form action="" method="post">
+   {{ form.hidden_tag() }}
+  {{ form.name(class_="form-control") }}
 
-</div>
-    <div class="container">
-        <div class="mb-3">
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="4" {{ form.text }}></textarea>
-            <br><input type="submit" class="btn btn-warning"{{ form.submit }}> <br>
+
+            <br> {{ form.text(class_="form-control") }}
+            <br>{{ form.submit(class_="btn btn-warning", rows_="4") }}
             </form>
 
-        </div>
+
 
     </div>
 

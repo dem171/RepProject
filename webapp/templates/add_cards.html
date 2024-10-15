@@ -8,14 +8,17 @@
 <div class="mb-3">
     <form action="" method="post" {{ form.hidden_tag() }}>
   <input type="text" class="form-control"  placeholder="Введите название"{{ form.name }}>
-</div>
-<div class="mb-3">
-  <textarea class="form-control" id="exampleFormControlTextarea1" rows="4" {{ form.text }}></textarea>
-    <br><input type="submit" class="btn btn-warning"{{ form.submit }}> <br>
-</form>
-</div>
 
+</div>
+    <div class="container">
+        <div class="mb-3">
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="4" {{ form.text }}></textarea>
+            <br><input type="submit" class="btn btn-warning"{{ form.submit }}> <br>
+            </form>
 
+        </div>
+
+    </div>
 
 
 {% with messages = get_flashed_messages() %}

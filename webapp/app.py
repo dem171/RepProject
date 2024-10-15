@@ -60,7 +60,7 @@ def add_cards():
 def discussion(id):
     form = CommentForm()
     card_info = Cards.query.get_or_404(id)
-    if request.method == "POST":
+    if request.method == "POST":                     #Добавление комментария
         if form.validate_on_submit():
             comment = Comments(text_comment=form.text_comment.data, author_id=current_user.id, card_id=card_info.id)
             try:
@@ -114,7 +114,6 @@ def delete_comment(id):
     else:
         return "ERROR 404"
 
-
 @app.route('/delete/<int:id>', methods=['POST', 'GET'])
 @login_required
 def del_card(id):
@@ -128,7 +127,7 @@ def del_card(id):
         except: "Не удалось удалить"
     else:
         return "error 404"
-    render_template('index.html')
+    return render_template('index.html')
 
 @app.route('/update_comment/<int:id>', methods=["POST", "GET"])
 def update_comment(id):

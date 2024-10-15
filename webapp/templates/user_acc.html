@@ -3,7 +3,7 @@
 {% endblock  %}
 {% block body %}
 <h3> Страница пользователя: {{ user.username }} </h3>
-Дата регистрации {{  user.date_registration.date()  }}
+Дата регистрации {{  user.date_registration.strftime('%d.%m.%Y %H:%M')  }}
 {% if user.user_cards %}
 <br><h3>Список постов</h3>
 {% for post in user.user_cards %}
@@ -12,7 +12,7 @@
                          id="alert">
     <h3>{{ post.name }}<br></h3>
 <br>{{ post.text }}<br>
-Дата публикации: {{ post.date_add_card.date() }}
+Дата публикации: {{ post.date_add_card.strftime('%d.%m.%Y %H:%M') }}
 </div>
     {% endfor %}
 {% else %}

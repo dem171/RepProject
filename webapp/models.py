@@ -17,15 +17,14 @@ convention = {
 metadata = MetaData(naming_convention=convention)
 db = SQLAlchemy()
 
-
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), nullable=False, unique=True, index=True)
     password = db.Column(db.String)
     rol = db.Column(db.String(15), index=True)
     date_registration = db.Column(db.DateTime, default=datetime.utcnow)
-    user_cards = db.relationship("Cards", backref="user")
-    user_comment = db.relationship("Comments", backref="user_com")
+    user_cards = db.relationship("Cards", backref="user", cascade='all, delete')
+    user_comment = db.relationship("Comments", backref="user_com", cascade='all, delete')
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -48,7 +47,7 @@ class Cards(db.Model):
     date_add_card = db.Column(db.DateTime, default=datetime.utcnow)
     comment_count = db.Column(db.Integer, default=0)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    card_comment = db.relationship("Comments", backref="card_com")
+    card_comment = db.relationship("Comments", backref="card_com", cascade='all, delete')
 
     def comments_count(self):
         return Comments.query.filter(Comments.card_id == self.id).count()

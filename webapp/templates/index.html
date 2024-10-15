@@ -22,12 +22,11 @@
                          {{ el.text }}
     <br>
     <br>
-            Дата публикации:{{ el.date_add_card.date()  }} |
+            Дата публикации:{{ el.date_add_card.strftime('%d.%m.%Y %H:%M') }} |
     Автор: <a href="{{ url_for('acc_user', id=el.user_id) }}" >{{ el.user.username }}</a> |
         <a href ="{{ url_for('discussion', id=el.id) }}" class="button">Обсудить</a> | Комментариев: {{ el.comments_count() }}
 
  </div>
-
 {% endfor %}
 
 

@@ -5,41 +5,43 @@
 {% endblock  %}
 {% block body %}
 <h4>Обсуждение поста: </h4>
-<div class="alert alert-dismissible alert-info col-5"
+<div class="alert alert-primary col-12"
                          role="alert"
                          id="alert">
     <br>
     <h3>{{ card_info.name }}</h3><br>
         {{ card_info.text }}<br>
     Автор: <a href="{{ url_for('acc_user', id=card_info.user.id) }}">{{ card_info.user.username }}<br></a>
-    Дата написания: {{  card_info.date_add_card.strftime('%d.%m.%Y %H:%M') }}
+  <br>   Дата написания: {{  card_info.date_add_card.strftime('%d.%m.%Y %H:%M') }}<br><br>
     {% if card_info.user.id == current_user.id %}
-    <a href="{{ url_for('upd_card', id=card_info.id) }}" class="btn btn-warning">Редактировать</a><br>
-    <form method="post" action="{{ url_for('del_card', id=card_info.id) }}">
-    <button type="submit" class="btn btn-danger">Удалить</button>
+  <form method="post" action="{{ url_for('del_card', id=card_info.id) }}">
+    <a href="{{ url_for('upd_card', id=card_info.id) }}" class="btn btn-outline-info">Редактировать</a>
+    <button type="submit" class="btn btn-outline-danger">Удалить</button>
     </form>
     {% endif %}
 </div>
+<div>
 <form action="{{url_for('discussion', id=card_info.id) }}" method="POST">
     {{ form.hidden_tag() }}
     {{ form.text_comment(class_="form-control") }}
-  <br>  {{ form.submit(class_="btn btn-warning") }}
+  <br>  {{ form.submit(class_="btn btn-outline-info") }}
 </form>
+</div>
 <h3>КОММЕНТАРИИ</h3>
 
 {% for el in card_info.card_comment  %}
-<div class="alert alert-dismissible alert-success col-5"
+<div class="alert alert-dismissible alert-success col-12"
                          role="alert"
                          id="alert">
     <a href="{{ url_for('acc_user', id=card_info.user.id) }}" >{{ el.user_com.username }}</a><br>
 
     {{ el.text_comment }}<br>
 
- Дата добавления : {{ el.date_comment.strftime('%d.%m.%Y %H:%M') }}
+ <br>Дата добавления : {{ el.date_comment.strftime('%d.%m.%Y %H:%M') }}
     {% if current_user.id == el.user_com.id %}
     <form method="post" action="{{ url_for('delete_comment', id=el.id) }}">
-    <a href="{{ url_for('update_comment', id=el.id) }}" methods="post" class="btn btn-warning">Редактировать</a>
-    <button  type="submit"   class="btn btn-danger">Удалить</button>
+    <a href="{{ url_for('update_comment', id=el.id) }}" methods="post" class="btn btn-outline-info">Редактировать</a>
+    <button  type="submit"   class="btn  btn-outline-danger">Удалить</button>
     {% else %}
     {% endif %}
 </div>

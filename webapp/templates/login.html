@@ -7,17 +7,18 @@
 
 {% block loging %}
 <h1>Страница входа</h1>
-<form action=""  method="POST" class="form form-control ">
+<div  class="alert alert-success col-5">
+<form action=""  method="POST" >
     {{ form.hidden_tag() }}
-    <br>  {{ form.username }}
+    <br>  {{ form.username(class_="form-control" ,type="text") }}
     <br>
-    <br>  {{ form.password }}
-    <br> {{ form.remember.label }}{{ form.remember }}
-    <br>  {{ form.submit }}
+    <br>  {{ form.password(class_="form-control" ,type="text") }}
+    <br> {{ form.remember.label }}{{ form.remember(class_="form-check-input") }}
+    <br>  {{ form.submit(class_="btn btn-outline-success") }}
 
 
     <h3>Нет аккаунта?</h3>
     <h3> <a href="register" >Регистрация</a></h3>
 </form>
-
+</div>
 {% endblock %}

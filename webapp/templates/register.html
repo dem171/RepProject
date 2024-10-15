@@ -6,22 +6,22 @@
 <h1>Страница регистрации</h1>
 {% block registr %}
 <h1>Страница регистрации</h1>
-<div class="container">
+<div class="alert alert-success col-5" >
 
-   <form  class="floating"    action=""  method="POST">
+   <form     action=""  method="POST">
        {{ form.hidden_tag() }}
-       {{ form.username }}
+       {{ form.username(class_="form-control" ,type="text")}}
        {% for error in form.username.errors %}
             <span style="color: red;">[{{ error }}]</span>
        {% endfor %}
        <br>
 
-       <br>     {{ form.password }}<br>
+            {{ form.password(class_="form-control" ,type="text") }}<br>
        <br>     {{ form.confirm_password }}<br>
             {% for error in form.password.errors %}
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-     <br>    {{ form.submit }}
+       {{ form.submit(class_="btn btn-outline-success")}}
 
 
 

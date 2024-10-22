@@ -10,8 +10,8 @@
 <div class="alert alert-dismissible alert-info col-5"
                          role="alert"
                          id="alert">
-    <h3>{{ post.name }}<br></h3>
-<br>{{ post.text }}<br>
+    <h3>{{ post.name|safe }}<br></h3>
+<br>{{ post.text|safe }}<br>
 Дата публикации: {{ post.date_add_card.strftime('%d.%m.%Y %H:%M') }}
 </div>
     {% endfor %}

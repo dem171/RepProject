@@ -12,16 +12,19 @@
        {{ form.hidden_tag() }}
        {{ form.username(class_="form-control" ,type="text")}}
        {% for error in form.username.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span style="color: red;">{{ error }}</span>
        {% endfor %}
        <br>
 
-            {{ form.password(class_="form-control" ,type="text") }}<br>
-       <br>     {{ form.confirm_password }}<br>
+            {{ form.password(class_="form-control" ,type="text") }}
             {% for error in form.password.errors %}
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
-       {{ form.submit(class_="btn btn-outline-success")}}
+       <br>    {{ form.password2(class="form-control" ,type="text") }}
+            {% for error in form.password2.errors %}
+                <span style="color: red;">{{ error }}</span>
+            {% endfor %}
+      <br> {{ form.submit(class_="btn btn-outline-success")}}
 
 
 

@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_ckeditor import CKEditor
 
 from form import RegistredForm, LoginForm, CommentForm, PostForm
 from models import User, Comments, Cards
@@ -10,6 +11,8 @@ from models import db
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///my_db.db'
 db.init_app(app)
+ckeditor = CKEditor(app)
+app.config['CKEDITOR_PKG_TYPE'] = 'full'
 app.secret_key = "1234"
 login = LoginManager()
 login.init_app(app)
@@ -161,6 +164,8 @@ def upd_card(id):
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = RegistredForm()
     if form.validate_on_submit():
         hash_pass = generate_password_hash(form.password.data)
@@ -174,6 +179,8 @@ def register():
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()

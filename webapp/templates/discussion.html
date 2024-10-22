@@ -10,7 +10,7 @@
                          id="alert">
     <br>
     <h3>{{ card_info.name }}</h3><br>
-        {{ card_info.text }}<br>
+        {{ card_info.text|safe }}<br>
     Автор: <a href="{{ url_for('acc_user', id=card_info.user.id) }}">{{ card_info.user.username }}<br></a>
   <br>   Дата написания: {{  card_info.date_add_card.strftime('%d.%m.%Y %H:%M') }}<br><br>
     {% if card_info.user.id == current_user.id %}
@@ -26,6 +26,8 @@
     {{ form.text_comment(class_="form-control") }}
   <br>  {{ form.submit(class_="btn btn-outline-info") }}
 </form>
+    {{ ckeditor.load() }}
+ {{ ckeditor.config(name='text_comment') }}
 </div>
 <h3>КОММЕНТАРИИ</h3>
 
@@ -35,7 +37,7 @@
                          id="alert">
     <a href="{{ url_for('acc_user', id=card_info.user.id) }}" >{{ el.user_com.username }}</a><br>
 
-    {{ el.text_comment }}<br>
+    {{ el.text_comment|safe }}<br>
 
  <br>Дата добавления : {{ el.date_comment.strftime('%d.%m.%Y %H:%M') }}
     {% if current_user.id == el.user_com.id %}

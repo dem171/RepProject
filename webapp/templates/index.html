@@ -19,7 +19,7 @@
                        <h3> {{ el.name }} </h3>
     <br>
     <br>
-                         {{ el.text }}
+                         {{ el.text|safe }}
     <br>
     <br>
             Дата публикации:{{ el.date_add_card.strftime('%d.%m.%Y %H:%M') }} |

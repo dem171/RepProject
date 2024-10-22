@@ -11,5 +11,7 @@
         <input type="submit" value="Сохранить" class="btn btn-warning">
         <a href="/personal_acc" class="btn btn-warning">Отменить редактирования</a>
     </form>
+    {{ ckeditor.load() }}
+ {{ ckeditor.config(name='text_comment') }}
 </div>
 {% endblock %}
